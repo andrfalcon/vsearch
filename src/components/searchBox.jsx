@@ -5,6 +5,8 @@ import { upsertToPinecone } from "../helpers/upsert";
 import { getEmbedding } from "../helpers/getEmbedding";
 import LoadingOverlay from "./LoadingOverlay";
 import { searchPinecone } from "../helpers/searchPinecone";
+import { getNamespaces } from "../helpers/getNamespaces";
+
 const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [videoId, setVideoId] = useState("");
@@ -52,15 +54,20 @@ const SearchBox = () => {
       const pineconeKey = localStorage.getItem('pineconeKey');
       const pineconeEndpoint = localStorage.getItem('pineconeEndpoint');
       const namespace = videoId;
-      
-      // Compute embeddings of video and upsert to Pinecone
-      for (const segment of transcript) {
-        const vectorId = `${videoId}-${segment.offset}`;
-        const text = segment.text;
-        const offset = segment.offset;
-        const duration = segment.duration;
-        const embedding = await getEmbedding(text, openAiKey);
-        await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace, pineconeEndpoint);
+
+      // Check if namespace exists in Pinecone
+      const namespaces = await getNamespaces(pineconeKey, pineconeEndpoint);
+      console.log("Namespaces: ", namespaces);
+      if (!namespaces.includes(namespace)) {
+        // Compute embeddings of video and upsert to Pinecone
+        for (const segment of transcript) {
+          const vectorId = `${videoId}-${segment.offset}`;
+          const text = segment.text;
+          const offset = segment.offset;
+          const duration = segment.duration;
+          const embedding = await getEmbedding(text, openAiKey);
+          await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace, pineconeEndpoint);
+        }
       }
 
       // Compute embeddings of search query and search Pinecone
@@ -77,7 +84,7 @@ const SearchBox = () => {
       });
       
       setSearchResults(timestamps);
-
+      
     } catch (error) {
       console.error('Error processing video:', error);
     } finally {
