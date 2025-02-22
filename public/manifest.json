@@ -6,15 +6,15 @@
   "action": {
     "default_popup": "index.html",
     "default_icon": {
-      "16": "logo192.png",
-      "48": "logo192.png",
-      "128": "logo192.png"
+      "16": "vsearch192.png",
+      "48": "vsearch192.png",
+      "128": "vsearch192.png"
     }
   },
   "icons": {
-    "16": "logo192.png",
-    "48": "logo192.png",
-    "128": "logo192.png"
+    "16": "vsearch192.png",
+    "48": "vsearch192.png",
+    "128": "vsearch192.png"
   },
   "permissions": [
     "tabs",
