@@ -10,13 +10,17 @@ export default function ApiInput() {
   const [pineconeKey, setPineconeKey] = useState(() => {
     return localStorage.getItem('pineconeKey') || ""
   })
+  const [pineconeEndpoint, setPineconeEndpoint] = useState(() => {
+    return localStorage.getItem('pineconeEndpoint') || ""
+  })
   const [isOpen, setIsOpen] = useState(false)
 
   // Save to localStorage whenever keys change
   useEffect(() => {
     localStorage.setItem('openAiKey', openAiKey)
     localStorage.setItem('pineconeKey', pineconeKey)
-  }, [openAiKey, pineconeKey])
+    localStorage.setItem('pineconeEndpoint', pineconeEndpoint)
+  }, [openAiKey, pineconeKey, pineconeEndpoint])
 
   const handleOpenAiChange = (e) => {
     setOpenAiKey(e.target.value)
@@ -26,15 +30,20 @@ export default function ApiInput() {
     setPineconeKey(e.target.value)
   }
 
+  const handlePineconeEndpointChange = (e) => {
+    setPineconeEndpoint(e.target.value)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault()
     // Explicitly save to localStorage when form is submitted
     localStorage.setItem('openAiKey', openAiKey)
     localStorage.setItem('pineconeKey', pineconeKey)
+    localStorage.setItem('pineconeEndpoint', pineconeEndpoint)
     setIsOpen(false)
   }
 
-  const bothKeysPresent = openAiKey && pineconeKey
+  const allFieldsPresent = openAiKey && pineconeKey && pineconeEndpoint
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
@@ -42,7 +51,7 @@ export default function ApiInput() {
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-gray-700">API Keys</span>
-            {bothKeysPresent ? (
+            {allFieldsPresent ? (
               <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
@@ -110,6 +119,16 @@ export default function ApiInput() {
                 placeholder="Enter your Pinecone API Key"
                 value={pineconeKey}
                 onChange={handlePineconeChange}
+                className="w-full px-3 py-2 border rounded-md text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">Pinecone Endpoint</label>
+              <input
+                type="text"
+                placeholder="Enter your Pinecone Endpoint"
+                value={pineconeEndpoint}
+                onChange={handlePineconeEndpointChange}
                 className="w-full px-3 py-2 border rounded-md text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>

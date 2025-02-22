@@ -9,6 +9,7 @@ const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [videoId, setVideoId] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
 
   useEffect(() => {
     // Get current tab URL when component mounts
@@ -68,13 +69,13 @@ const SearchBox = () => {
       
       // Store results
       const timestamps = [];
-      
+
       results["matches"].forEach(match => {
         const timestamp = match.id.split("-")[1];
         timestamps.push(timestamp);
       });
-
-      console.log(timestamps);
+      
+      setSearchResults(timestamps);
 
     } catch (error) {
       console.error('Error processing video:', error);
@@ -106,6 +107,28 @@ const SearchBox = () => {
               Search
             </button>
           </div>
+
+          {/* New Results Section */}
+          {searchResults.length > 0 && (
+            <div className="mt-4 space-y-2">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Results</h3>
+              <div className="space-y-2">
+                {searchResults.map((timestamp, index) => (
+                  <div 
+                    key={timestamp}
+                    className="flex items-center gap-3 p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                  >
+                    <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-medium">
+                      {index + 1}
+                    </div>
+                    <span className="text-gray-700">
+                      {Math.floor(timestamp / 60)}:{String(Math.floor(timestamp % 60)).padStart(2, '0')}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
