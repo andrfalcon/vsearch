@@ -1,6 +1,8 @@
 /* global chrome */
 import { useState, useEffect } from "react";
 import { YoutubeTranscript } from 'youtube-transcript';
+import { upsertToPinecone } from "../helpers/upsert";
+import { getEmbedding } from "../helpers/getEmbedding";
 
 const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,10 +35,27 @@ const SearchBox = () => {
     try {
       const transcript = await YoutubeTranscript.fetchTranscript(videoId);
       console.log(transcript);
+      return transcript;
     } catch (error) {
       console.error('Error fetching transcript:', error);
     }
   };
+
+  const handleProcess = async () => {
+    const transcript = await handleSearch();
+    const openAiKey = localStorage.getItem('openAiKey');
+    const pineconeKey = localStorage.getItem('pineconeKey');
+    
+    for (const segment of transcript) {
+      const vectorId = `${videoId}-${segment.offset}`;
+      const text = segment.text;
+      const offset = segment.offset;
+      const duration = segment.duration;
+      const namespace = videoId;
+      const embedding = await getEmbedding(text, openAiKey);
+      await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace);
+    }
+  }
 
   return (
     <div className="w-full max-w-md mx-auto p-4">
@@ -54,7 +73,7 @@ const SearchBox = () => {
           />
           <button
             className="px-6 py-2 text-white font-semibold rounded-lg bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50 transform transition-transform duration-200 hover:scale-105 active:scale-95"
-            onClick={handleSearch}
+            onClick={handleProcess}
           >
             Search
           </button>

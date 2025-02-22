@@ -20,11 +20,14 @@
     "tabs",
     "https://*.youtube.com/*",
     "https://*.youtu.be/*",
+    "https://*.svc.*.pinecone.io/*",
     "webRequest",
-    "storage"
+    "storage",
+    "webRequestAuthProvider"
   ],
   "host_permissions": [
     "https://*.youtube.com/*",
-    "https://*.youtu.be/*"
+    "https://*.youtu.be/*",
+    "https://*.svc.*.pinecone.io/*"
   ]
 }
