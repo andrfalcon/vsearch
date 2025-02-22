@@ -8,9 +8,9 @@ export async function upsertToPinecone(vectorId, vectorValues, metadata, apiKey,
         "id": vectorId,
         "values": vectorValues,
         "metadata": metadata,
-        "namespace": namespace
       }
-    ]
+    ],
+    "namespace": namespace
   }, {
     headers: {
       "Content-Type": "application/json",

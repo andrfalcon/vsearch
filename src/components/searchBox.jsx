@@ -4,7 +4,7 @@ import { YoutubeTranscript } from 'youtube-transcript';
 import { upsertToPinecone } from "../helpers/upsert";
 import { getEmbedding } from "../helpers/getEmbedding";
 import LoadingOverlay from "./LoadingOverlay";
-
+import { searchPinecone } from "../helpers/searchPinecone";
 const SearchBox = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [videoId, setVideoId] = useState("");
@@ -49,16 +49,33 @@ const SearchBox = () => {
       const transcript = await handleSearch();
       const openAiKey = localStorage.getItem('openAiKey');
       const pineconeKey = localStorage.getItem('pineconeKey');
+      const namespace = videoId;
       
+      // Compute embeddings of video and upsert to Pinecone
       for (const segment of transcript) {
         const vectorId = `${videoId}-${segment.offset}`;
         const text = segment.text;
         const offset = segment.offset;
         const duration = segment.duration;
-        const namespace = videoId;
         const embedding = await getEmbedding(text, openAiKey);
         await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace);
       }
+
+      // Compute embeddings of search query and search Pinecone
+      const searchQuery = searchTerm;
+      const searchEmbedding = await getEmbedding(searchQuery, openAiKey);
+      const results = await searchPinecone(searchEmbedding, pineconeKey, namespace);
+      
+      // Store results
+      const timestamps = [];
+      
+      results["matches"].forEach(match => {
+        const timestamp = match.id.split("-")[1];
+        timestamps.push(timestamp);
+      });
+
+      console.log(timestamps);
+
     } catch (error) {
       console.error('Error processing video:', error);
     } finally {
