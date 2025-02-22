@@ -1,8 +1,8 @@
 /* global chrome */
 import axios from "axios";
 
-export async function upsertToPinecone(vectorId, vectorValues, metadata, apiKey, namespace) {
-  const response = await axios.post("https://vsearch-7000tc0.svc.aped-4627-b74a.pinecone.io/vectors/upsert", {
+export async function upsertToPinecone(vectorId, vectorValues, metadata, apiKey, namespace, pineconeEndpoint) {
+  const response = await axios.post(`${pineconeEndpoint}/vectors/upsert`, {
     "vectors": [
       {
         "id": vectorId,

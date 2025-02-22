@@ -50,6 +50,7 @@ const SearchBox = () => {
       const transcript = await handleSearch();
       const openAiKey = localStorage.getItem('openAiKey');
       const pineconeKey = localStorage.getItem('pineconeKey');
+      const pineconeEndpoint = localStorage.getItem('pineconeEndpoint');
       const namespace = videoId;
       
       // Compute embeddings of video and upsert to Pinecone
@@ -59,13 +60,13 @@ const SearchBox = () => {
         const offset = segment.offset;
         const duration = segment.duration;
         const embedding = await getEmbedding(text, openAiKey);
-        await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace);
+        await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace, pineconeEndpoint);
       }
 
       // Compute embeddings of search query and search Pinecone
       const searchQuery = searchTerm;
       const searchEmbedding = await getEmbedding(searchQuery, openAiKey);
-      const results = await searchPinecone(searchEmbedding, pineconeKey, namespace);
+      const results = await searchPinecone(searchEmbedding, pineconeKey, namespace, pineconeEndpoint);
       
       // Store results
       const timestamps = [];
