@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# vsearch - a chrome extension for searching YouTube videos
 
 vsearch is a chrome extension that allows you to search through YouTube videos using natural language. Simply visit any publicly listed YouTube video and click the extension icon to search through the video.
 
