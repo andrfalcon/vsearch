@@ -69,7 +69,7 @@ const SearchBox = () => {
           await upsertToPinecone(vectorId, embedding, { "offset": offset, "duration": duration, "videoId": videoId }, pineconeKey, namespace, pineconeEndpoint);
         }
       }
-
+      console.log("Upserted to Pinecone");
       // Compute embeddings of search query and search Pinecone
       const searchQuery = searchTerm;
       const searchEmbedding = await getEmbedding(searchQuery, openAiKey);
